@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Page Header -->
+    <div>
+        <div class="flex items-center gap-3 mb-1">
+            <i data-lucide="message-circle-question" class="w-6 h-6 text-copper-600"></i>
+            <h1 class="text-3xl font-serif text-surface-900">Q&A</h1>
+        </div>
+        <p class="text-surface-500 font-sans text-sm ml-9">Ask questions about your collective agreements. All answers include citations.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Question Form -->
+        <div class="space-y-6">
+            <div class="bg-surface-0 border border-surface-200 rounded-lg p-6">
+                <h2 class="text-xl font-serif text-surface-900 mb-5">Ask a Question</h2>
+
+                <form hx-post="/qa/ask"
+                      hx-target="#qa-response"
+                      hx-indicator="#qa-spinner"
+                      class="space-y-4">
+                    <div>
+                        <label for="question" class="block text-sm font-medium font-sans text-surface-600 mb-1.5">Your Question</label>
+                        <textarea name="question"
+                                  id="question"
+                                  rows="5"
+                                  placeholder="e.g., What is the overtime rate for weekends? What are the vacation entitlements?"
+                                  class="block w-full border border-surface-300 rounded-lg bg-surface-0 focus:border-copper-500 focus:ring-1 focus:ring-copper-500 text-surface-900 placeholder:text-surface-400 px-4 py-3 font-sans text-sm resize-none"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full inline-flex justify-center items-center px-5 py-3 bg-copper-600 hover:bg-copper-700 text-white text-sm font-medium font-sans rounded-lg transition-colors">
+                        <i data-lucide="send" class="w-4 h-4 mr-2"></i>
+                        Get Answer
+                        <span id="qa-spinner" class="htmx-indicator ml-2">
+                            <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- How it works -->
+            <div class="bg-surface-50 border border-surface-200 rounded-lg p-5">
+                <h3 class="text-sm font-sans font-medium text-surface-700 flex items-center mb-3">
+                    <i data-lucide="info" class="w-4 h-4 mr-2 text-copper-600"></i>
+                    How it works
+                </h3>
+                <ol class="space-y-2 text-sm font-sans text-surface-600">
+                    <li class="flex items-start gap-3">
+                        <span class="flex-shrink-0 w-5 h-5 rounded-full bg-surface-200 text-surface-600 text-xs font-medium flex items-center justify-center mt-0.5">1</span>
+                        <span>Your question is searched against all indexed documents</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="flex-shrink-0 w-5 h-5 rounded-full bg-surface-200 text-surface-600 text-xs font-medium flex items-center justify-center mt-0.5">2</span>
+                        <span>Relevant pages are sent to Claude AI for analysis</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="flex-shrink-0 w-5 h-5 rounded-full bg-surface-200 text-surface-600 text-xs font-medium flex items-center justify-center mt-0.5">3</span>
+                        <span>The answer includes citations to specific pages</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="flex-shrink-0 w-5 h-5 rounded-full bg-surface-200 text-surface-600 text-xs font-medium flex items-center justify-center mt-0.5">4</span>
+                        <span>If no evidence is found, we'll tell you explicitly</span>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Response Area -->
+        <div id="qa-response">
+            {% include "components/qa_answer.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

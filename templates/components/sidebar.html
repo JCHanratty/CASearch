@@ -1,0 +1,115 @@
+<aside class="w-60 sidebar-surface min-h-[calc(100vh-3.5rem)] flex flex-col">
+    <nav class="flex-1 px-3 py-5 space-y-0.5">
+        <a href="/"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Dashboard' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/documents"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Documents' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="files" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Documents</span>
+        </a>
+
+        <a href="/search"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Search' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="search" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Search</span>
+        </a>
+
+        <a href="/qa"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Q&A' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="message-circle-question" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Q&A</span>
+        </a>
+
+        <a href="/compare"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Compare' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="columns-2" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Compare</span>
+        </a>
+
+        <a href="/matrix"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Matrix Compare' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="table-2" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Matrix</span>
+        </a>
+
+        <a href="/admin/synonyms"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Synonym Library' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="book-a" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Synonyms</span>
+        </a>
+
+        <!-- Divider -->
+        <div class="border-t border-surface-800 my-3"></div>
+
+        <a href="/tutorial"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Tutorial' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="book-open" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Tutorial</span>
+        </a>
+
+        <a href="/admin/config"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Diagnostics' %}bg-surface-800 text-copper-400 font-medium{% else %}text-surface-400 hover:bg-surface-800/60 hover:text-surface-200{% endif %}">
+            <i data-lucide="wrench" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Diagnostics</span>
+        </a>
+
+        <!-- Search Settings -->
+        <div class="border-t border-surface-800 my-3"></div>
+        <div class="px-1">
+            <p class="px-2 text-[10px] font-medium text-surface-500 uppercase tracking-widest mb-2">Search</p>
+            <label class="flex items-center justify-between px-2 py-1.5 cursor-pointer group">
+                <span class="text-xs text-surface-400 group-hover:text-surface-300 transition-colors">Synonyms</span>
+                <div class="relative inline-flex">
+                    <input type="checkbox"
+                           id="sidebar-expand-synonyms"
+                           class="sr-only peer"
+                           onchange="saveSynonymPreference(this.checked)">
+                    <div class="toggle-track"></div>
+                </div>
+            </label>
+            <p class="px-2 text-[10px] text-surface-600 leading-relaxed">Expand terms with related words</p>
+        </div>
+
+        <!-- Suggested Prompts -->
+        <div class="border-t border-surface-800 my-3"></div>
+        <div class="px-1">
+            <p class="px-2 text-[10px] font-medium text-surface-500 uppercase tracking-widest mb-2">Quick Prompts</p>
+            <div class="space-y-0.5">
+                {% for prompt in SUGGESTED_PROMPTS() %}
+                <button type="button"
+                        onclick="usePrompt('{{ prompt | e }}')"
+                        class="w-full text-left px-2 py-1.5 rounded text-xs text-surface-500 hover:bg-surface-800/60 hover:text-surface-300 transition-colors truncate"
+                        title="{{ prompt }}">
+                    {{ prompt[:40] }}{% if prompt|length > 40 %}...{% endif %}
+                </button>
+                {% endfor %}
+            </div>
+            <a href="/tutorial" class="block mt-2 px-2 text-[10px] text-surface-600 hover:text-surface-400 transition-colors">
+                View all prompts
+            </a>
+        </div>
+    </nav>
+
+    <!-- Version -->
+    <div class="px-5 py-4 border-t border-surface-800">
+        <p class="text-[10px] text-surface-600">Contract Dashboard v2.0</p>
+    </div>
+
+    <script>
+    function usePrompt(text) {
+        const q = document.getElementById('question');
+        if (q) {
+            q.value = text;
+            q.focus();
+            q.dispatchEvent(new Event('input'));
+        } else {
+            sessionStorage.setItem('pendingPrompt', text);
+            window.location.href = '/qa';
+        }
+    }
+    </script>
+</aside>

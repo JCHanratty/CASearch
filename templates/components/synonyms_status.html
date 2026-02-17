@@ -1,0 +1,23 @@
+<!-- Status message fragment for reload action -->
+{% if success_message %}
+<div class="p-4 bg-surface-0 border border-green-200 rounded-lg mb-4">
+    <div class="flex items-center">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-600 mr-2 flex-shrink-0"></i>
+        <div>
+            <p class="text-sm font-sans text-green-800">{{ success_message }}</p>
+            {% if custom_count is defined and total_count is defined %}
+            <p class="text-xs font-sans text-green-700 mt-1">Custom: {{ custom_count }} | Total: {{ total_count }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if error_message %}
+<div class="p-4 bg-surface-0 border border-red-200 rounded-lg mb-4">
+    <div class="flex items-center">
+        <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 mr-2 flex-shrink-0"></i>
+        <p class="text-sm font-sans text-red-800">{{ error_message }}</p>
+    </div>
+</div>
+{% endif %}

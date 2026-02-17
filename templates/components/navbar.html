@@ -1,0 +1,57 @@
+<nav class="bg-surface-900 border-b border-surface-800">
+    <div class="px-5 md:px-8">
+        <div class="flex h-14 items-center justify-between">
+            <!-- Brand -->
+            <div class="flex items-center">
+                <a href="/" class="flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-lg bg-copper-600 flex items-center justify-center group-hover:bg-copper-500 transition-colors">
+                        <i data-lucide="file-text" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-lg font-serif text-surface-0 tracking-tight">Contract Dashboard</span>
+                        {% if ORGANIZATION_NAME %}
+                        <span class="hidden sm:inline text-xs text-surface-400 font-sans">{{ ORGANIZATION_NAME }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+
+            <!-- Right actions -->
+            <div class="flex items-center gap-2">
+                <!-- Mobile menu -->
+                <button type="button" onclick="toggleSidebar()"
+                        class="md:hidden p-2 rounded-lg text-surface-400 hover:text-surface-0 hover:bg-surface-800 transition-colors">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Report Bug -->
+                <button type="button"
+                        hx-get="/admin/bug-report/form"
+                        hx-target="#modal-root"
+                        hx-swap="innerHTML"
+                        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-surface-400 hover:text-surface-200 hover:bg-surface-800 transition-colors text-sm">
+                    <i data-lucide="flag" class="w-3.5 h-3.5"></i>
+                    <span>Report</span>
+                </button>
+
+                <!-- Update available indicator -->
+                {% set update = update_info() %}
+                {% if update and update.available %}
+                <a href="{{ update.html_url }}" target="_blank" rel="noopener"
+                   class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-copper-400 hover:text-copper-300 hover:bg-surface-800 transition-colors text-sm"
+                   title="Update available: {{ update.latest_version }}">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>{{ update.latest_version }}</span>
+                </a>
+                {% endif %}
+
+                <!-- Diagnostics -->
+                <a href="/admin/config"
+                   class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-surface-400 hover:text-surface-200 hover:bg-surface-800 transition-colors text-sm">
+                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                    <span>Diagnostics</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>

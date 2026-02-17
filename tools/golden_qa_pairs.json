@@ -1,0 +1,152 @@
+[
+  {
+    "question": "What is the overtime rate?",
+    "expected_keywords": ["overtime", "time and a half"],
+    "expected_topic": "overtime",
+    "difficulty": "easy"
+  },
+  {
+    "question": "How much do employees get paid for working OT?",
+    "expected_keywords": ["overtime"],
+    "expected_topic": "overtime (synonym test: OT)",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What are the wage rates in the collective agreement?",
+    "expected_keywords": ["wage", "salary", "pay", "rate"],
+    "expected_topic": "wages/salary",
+    "difficulty": "easy"
+  },
+  {
+    "question": "How much compensation do employees receive?",
+    "expected_keywords": ["wage", "salary", "pay", "compensation"],
+    "expected_topic": "wages/salary (natural language)",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What is the sick leave policy?",
+    "expected_keywords": ["sick leave", "sick"],
+    "expected_topic": "sick leave",
+    "difficulty": "easy"
+  },
+  {
+    "question": "How many days off can I take when I am ill?",
+    "expected_keywords": ["sick", "leave", "illness"],
+    "expected_topic": "sick leave (natural language)",
+    "difficulty": "hard"
+  },
+  {
+    "question": "What is the vacation entitlement?",
+    "expected_keywords": ["vacation", "annual leave"],
+    "expected_topic": "vacation",
+    "difficulty": "easy"
+  },
+  {
+    "question": "How much paid time off do employees receive per year?",
+    "expected_keywords": ["vacation", "leave", "paid time off"],
+    "expected_topic": "vacation (synonym test: PTO)",
+    "difficulty": "hard"
+  },
+  {
+    "question": "What is the grievance procedure?",
+    "expected_keywords": ["grievance"],
+    "expected_topic": "grievance procedure",
+    "difficulty": "easy"
+  },
+  {
+    "question": "How do I file a complaint or dispute under the contract?",
+    "expected_keywords": ["grievance", "complaint", "dispute"],
+    "expected_topic": "grievance procedure (natural language)",
+    "difficulty": "hard"
+  },
+  {
+    "question": "How does seniority work?",
+    "expected_keywords": ["seniority"],
+    "expected_topic": "seniority",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What is the probationary period for new employees?",
+    "expected_keywords": ["probation", "probationary"],
+    "expected_topic": "probation",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What are the grounds for termination?",
+    "expected_keywords": ["termination", "dismissal", "discharge"],
+    "expected_topic": "termination",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What benefits are provided under the agreement?",
+    "expected_keywords": ["benefit"],
+    "expected_topic": "benefits",
+    "difficulty": "easy"
+  },
+  {
+    "question": "Is dental coverage included in the plan?",
+    "expected_keywords": ["dental"],
+    "expected_topic": "dental benefits",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What is the pension plan?",
+    "expected_keywords": ["pension", "retirement"],
+    "expected_topic": "pension",
+    "difficulty": "easy"
+  },
+  {
+    "question": "How many days of bereavement leave are allowed?",
+    "expected_keywords": ["bereavement", "compassionate", "funeral"],
+    "expected_topic": "bereavement leave",
+    "difficulty": "medium"
+  },
+  {
+    "question": "Is there extra pay for working evenings or nights?",
+    "expected_keywords": ["shift", "differential", "premium"],
+    "expected_topic": "shift differential (natural language)",
+    "difficulty": "hard"
+  },
+  {
+    "question": "How are union dues collected?",
+    "expected_keywords": ["dues", "union"],
+    "expected_topic": "union dues",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What is the job posting process?",
+    "expected_keywords": ["posting", "job", "vacancy"],
+    "expected_topic": "job posting",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What are the regular hours of work?",
+    "expected_keywords": ["hours of work", "hours", "work"],
+    "expected_topic": "hours of work",
+    "difficulty": "easy"
+  },
+  {
+    "question": "What is acting pay and when does it apply?",
+    "expected_keywords": ["acting", "pay", "temporary"],
+    "expected_topic": "acting pay",
+    "difficulty": "medium"
+  },
+  {
+    "question": "Which days are recognized as statutory holidays?",
+    "expected_keywords": ["statutory", "holiday", "stat"],
+    "expected_topic": "statutory holidays",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What is the layoff and recall procedure?",
+    "expected_keywords": ["layoff", "recall"],
+    "expected_topic": "layoff/recall",
+    "difficulty": "medium"
+  },
+  {
+    "question": "What are the workplace safety provisions?",
+    "expected_keywords": ["safety", "health"],
+    "expected_topic": "safety",
+    "difficulty": "medium"
+  }
+]
