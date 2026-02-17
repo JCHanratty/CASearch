@@ -6,13 +6,13 @@
     <div>
         <div class="flex items-center gap-3 mb-1">
             <i data-lucide="search" class="w-6 h-6 text-copper-600"></i>
-            <h1 class="text-3xl font-serif text-surface-900">Search</h1>
+            <h1 class="text-3xl font-serif text-surface-100">Search</h1>
         </div>
-        <p class="text-surface-500 font-sans text-sm ml-9">Search across all indexed collective agreements</p>
+        <p class="text-surface-400 font-sans text-sm ml-9">Search across all indexed collective agreements</p>
     </div>
 
     <!-- Search Form Card -->
-    <div class="bg-surface-0 border border-surface-200 rounded-lg p-6">
+    <div class="bg-surface-800 border border-surface-700 rounded-lg p-6">
         <form hx-get="/search"
               hx-target="#search-results"
               hx-indicator="#search-spinner"
@@ -31,7 +31,7 @@
                            id="query"
                            value="{{ query }}"
                            placeholder="Search for terms, &quot;quoted phrases&quot;, or topics..."
-                           class="block w-full border border-surface-300 rounded-lg bg-surface-0 focus:border-copper-500 focus:ring-1 focus:ring-copper-500 text-surface-900 placeholder:text-surface-400 pl-11 pr-4 py-3 font-sans text-sm">
+                           class="block w-full border border-surface-600 rounded-lg bg-surface-800 focus:border-copper-500 focus:ring-1 focus:ring-copper-500 text-surface-100 placeholder:text-surface-400 pl-11 pr-4 py-3 font-sans text-sm">
                 </div>
                 <button type="submit"
                         class="inline-flex items-center px-5 py-3 bg-copper-600 hover:bg-copper-700 text-white text-sm font-medium font-sans rounded-lg transition-colors flex-shrink-0">
@@ -44,13 +44,13 @@
             </div>
 
             <!-- Filters Row -->
-            <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4 border-t border-surface-200">
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4 border-t border-surface-700">
 
                 <!-- Document Filter -->
                 <div class="flex items-center gap-2">
-                    <label for="file_id" class="text-xs font-medium font-sans text-surface-500 uppercase tracking-wide">Document</label>
+                    <label for="file_id" class="text-xs font-medium font-sans text-surface-400 uppercase tracking-wide">Document</label>
                     <select name="file_id" id="file_id"
-                            class="border border-surface-300 rounded-lg bg-surface-0 focus:border-copper-500 focus:ring-1 focus:ring-copper-500 text-surface-900 text-sm font-sans py-1.5 pl-3 pr-8">
+                            class="border border-surface-600 rounded-lg bg-surface-800 focus:border-copper-500 focus:ring-1 focus:ring-copper-500 text-surface-100 text-sm font-sans py-1.5 pl-3 pr-8">
                         <option value="">All Documents</option>
                         {% for file in files %}
                         <option value="{{ file.id }}" {% if file_id == file.id %}selected{% endif %}>
@@ -61,28 +61,28 @@
                 </div>
 
                 <!-- Divider -->
-                <div class="w-px h-6 bg-surface-200 hidden sm:block"></div>
+                <div class="w-px h-6 bg-surface-700 hidden sm:block"></div>
 
                 <!-- Match Mode Toggle -->
                 <div class="flex items-center gap-2">
-                    <span class="text-xs font-medium font-sans text-surface-500 uppercase tracking-wide">Match</span>
-                    <div class="flex rounded-lg border border-surface-200 overflow-hidden">
+                    <span class="text-xs font-medium font-sans text-surface-400 uppercase tracking-wide">Match</span>
+                    <div class="flex rounded-lg border border-surface-700 overflow-hidden">
                         <label class="relative inline-flex items-center">
                             <input type="radio" name="mode" value="and"
                                    {% if mode == 'and' %}checked{% endif %}
                                    class="sr-only peer">
                             <span class="px-3 py-1.5 text-xs font-medium font-sans cursor-pointer transition-colors
-                                         bg-surface-0 text-surface-600
+                                         bg-surface-800 text-surface-300
                                          peer-checked:bg-copper-600 peer-checked:text-white">
                                 All Terms (AND)
                             </span>
                         </label>
-                        <label class="relative inline-flex items-center border-l border-surface-200">
+                        <label class="relative inline-flex items-center border-l border-surface-700">
                             <input type="radio" name="mode" value="or"
                                    {% if mode == 'or' %}checked{% endif %}
                                    class="sr-only peer">
                             <span class="px-3 py-1.5 text-xs font-medium font-sans cursor-pointer transition-colors
-                                         bg-surface-0 text-surface-600
+                                         bg-surface-800 text-surface-300
                                          peer-checked:bg-copper-600 peer-checked:text-white">
                                 Any Term (OR)
                             </span>
@@ -91,29 +91,29 @@
                 </div>
 
                 <!-- Divider -->
-                <div class="w-px h-6 bg-surface-200 hidden sm:block"></div>
+                <div class="w-px h-6 bg-surface-700 hidden sm:block"></div>
 
                 <!-- Search Mode Toggle -->
                 <div class="flex items-center gap-2">
-                    <span class="text-xs font-medium font-sans text-surface-500 uppercase tracking-wide">Mode</span>
-                    <div class="flex rounded-lg border border-surface-200 overflow-hidden">
+                    <span class="text-xs font-medium font-sans text-surface-400 uppercase tracking-wide">Mode</span>
+                    <div class="flex rounded-lg border border-surface-700 overflow-hidden">
                         <label class="relative inline-flex items-center">
                             <input type="radio" name="search_mode" value="ai"
                                    {% if search_mode == 'ai' %}checked{% endif %}
                                    class="sr-only peer">
                             <span class="px-3 py-1.5 text-xs font-medium font-sans cursor-pointer transition-colors flex items-center gap-1.5
-                                         bg-surface-0 text-surface-600
+                                         bg-surface-800 text-surface-300
                                          peer-checked:bg-copper-600 peer-checked:text-white">
                                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                                 AI Analysis
                             </span>
                         </label>
-                        <label class="relative inline-flex items-center border-l border-surface-200">
+                        <label class="relative inline-flex items-center border-l border-surface-700">
                             <input type="radio" name="search_mode" value="text"
                                    {% if search_mode != 'ai' %}checked{% endif %}
                                    class="sr-only peer">
                             <span class="px-3 py-1.5 text-xs font-medium font-sans cursor-pointer transition-colors flex items-center gap-1.5
-                                         bg-surface-0 text-surface-600
+                                         bg-surface-800 text-surface-300
                                          peer-checked:bg-copper-600 peer-checked:text-white">
                                 <i data-lucide="type" class="w-3.5 h-3.5"></i>
                                 Text Search
@@ -123,7 +123,7 @@
                 </div>
 
                 <!-- Divider -->
-                <div class="w-px h-6 bg-surface-200 hidden sm:block"></div>
+                <div class="w-px h-6 bg-surface-700 hidden sm:block"></div>
 
                 <!-- Synonym Expansion Toggle -->
                 <div class="flex items-center gap-2" id="synonym-toggle">
@@ -135,7 +135,7 @@
                                {% if expand_synonyms %}checked{% endif %}
                                class="sr-only peer">
                         <div class="toggle-track"></div>
-                        <span class="text-xs font-medium font-sans text-surface-600">Synonyms</span>
+                        <span class="text-xs font-medium font-sans text-surface-300">Synonyms</span>
                     </label>
                     <div class="relative group">
                         <i data-lucide="info" class="w-3.5 h-3.5 text-surface-400 cursor-help"></i>
@@ -158,12 +158,12 @@
     {% if query and results %}
     <div class="flex justify-end gap-2">
         <a href="/search/export?q={{ query | urlencode }}&mode={{ mode }}&format=html{% if file_id %}&file_id={{ file_id }}{% endif %}"
-           class="inline-flex items-center px-4 py-2 border border-surface-200 bg-surface-0 hover:bg-surface-50 text-surface-700 text-xs font-medium font-sans rounded-lg transition-colors">
+           class="inline-flex items-center px-4 py-2 border border-surface-700 bg-surface-800 hover:bg-surface-700 text-surface-200 text-xs font-medium font-sans rounded-lg transition-colors">
             <i data-lucide="download" class="w-3.5 h-3.5 mr-1.5"></i>
             Export HTML
         </a>
         <a href="/search/export?q={{ query | urlencode }}&mode={{ mode }}&format=docx{% if file_id %}&file_id={{ file_id }}{% endif %}"
-           class="inline-flex items-center px-4 py-2 border border-surface-200 bg-surface-0 hover:bg-surface-50 text-surface-700 text-xs font-medium font-sans rounded-lg transition-colors">
+           class="inline-flex items-center px-4 py-2 border border-surface-700 bg-surface-800 hover:bg-surface-700 text-surface-200 text-xs font-medium font-sans rounded-lg transition-colors">
             <i data-lucide="download" class="w-3.5 h-3.5 mr-1.5"></i>
             Export DOCX
         </a>

@@ -5,7 +5,9 @@ input[type="text"],
 input[type="search"],
 textarea,
 select {
-    border: 1px solid #d1d5db;
+    border: 1px solid #44403c;
+    background-color: #1c1917;
+    color: #d6d3d1;
     padding: 0.5rem 0.75rem;
 }
 

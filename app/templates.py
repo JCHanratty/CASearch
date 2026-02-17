@@ -51,27 +51,27 @@ def render_ai_markdown(text: str) -> str:
         # Bold **text**
         s = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', s)
         # Citations [Doc, Page X] - make smaller
-        s = re.sub(r'\[([^\]]+), Page (\d+)\]', r'<span class="text-slate-400 text-xs">[<span>\1</span>, p.\2]</span>', s)
+        s = re.sub(r'\[([^\]]+), Page (\d+)\]', r'<span class="text-surface-400 text-xs">[<span>\1</span>, p.\2]</span>', s)
         return s
 
     def flush_table():
         nonlocal table_rows, in_table
         if not table_rows:
             return ""
-        html = '<div class="overflow-x-auto my-2"><table class="w-full text-xs border border-slate-300">'
+        html = '<div class="overflow-x-auto my-2"><table class="w-full text-xs border border-surface-700">'
         for i, row in enumerate(table_rows):
             cells = [c.strip() for c in row.split('|')[1:-1]]
             if i == 0:
-                html += '<thead class="bg-slate-100"><tr>'
+                html += '<thead class="bg-surface-800"><tr>'
                 for cell in cells:
-                    html += f'<th class="px-2 py-1 text-left font-semibold text-slate-700 border-b border-slate-300">{process_inline(cell)}</th>'
+                    html += f'<th class="px-2 py-1 text-left font-semibold text-surface-200 border-b border-surface-700">{process_inline(cell)}</th>'
                 html += '</tr></thead><tbody>'
             elif '---' in row:
                 continue  # skip separator
             else:
-                html += '<tr class="border-b border-slate-200">'
+                html += '<tr class="border-b border-surface-700">'
                 for cell in cells:
-                    html += f'<td class="px-2 py-1 text-slate-600">{process_inline(cell)}</td>'
+                    html += f'<td class="px-2 py-1 text-surface-300">{process_inline(cell)}</td>'
                 html += '</tr>'
         html += '</tbody></table></div>'
         table_rows = []
@@ -97,9 +97,9 @@ def render_ai_markdown(text: str) -> str:
 
         # Headings
         if trimmed.startswith('## '):
-            html_parts.append(f'<h4 class="font-semibold text-slate-800 mt-3 mb-1 pb-1 border-b border-slate-200">{trimmed[3:]}</h4>')
+            html_parts.append(f'<h4 class="font-semibold text-surface-100 mt-3 mb-1 pb-1 border-b border-surface-700">{trimmed[3:]}</h4>')
         elif trimmed.startswith('# '):
-            html_parts.append(f'<h3 class="font-bold text-slate-900 mt-3 mb-1">{trimmed[2:]}</h3>')
+            html_parts.append(f'<h3 class="font-bold text-surface-100 mt-3 mb-1">{trimmed[2:]}</h3>')
         # Bullets
         elif trimmed.startswith('- ') or trimmed.startswith('* '):
             html_parts.append(f'<div class="flex items-start my-0.5 ml-1"><span class="text-red-500 mr-1.5">•</span><span>{process_inline(trimmed[2:])}</span></div>')
@@ -126,7 +126,7 @@ def highlight_text(text: str, term: str) -> str:
     # Case-insensitive highlight
     pattern = re.compile(re.escape(term), re.IGNORECASE)
     highlighted = pattern.sub(
-        lambda m: f'<mark class="bg-yellow-200 px-0.5 rounded">{m.group()}</mark>',
+        lambda m: f'<mark class="px-0.5 rounded">{m.group()}</mark>',
         text
     )
     return Markup(highlighted)

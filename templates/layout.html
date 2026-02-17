@@ -79,10 +79,10 @@
 
         /* Search highlight */
         mark {
-            background-color: #faecd8;
+            background-color: rgba(180, 83, 9, 0.35);
             padding: 0.1rem 0.2rem;
             border-radius: 2px;
-            color: #632d10;
+            color: #f4d5a8;
         }
 
         /* Citation */
@@ -117,13 +117,13 @@
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+        ::-webkit-scrollbar-thumb { background: #44403c; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #57534e; }
 
         /* Toggle switch */
         .toggle-track {
             width: 36px; height: 20px;
-            background: #d6d3d1;
+            background: #44403c;
             border-radius: 10px;
             position: relative;
             transition: background 0.2s ease;
@@ -147,7 +147,7 @@
         }
     </style>
 </head>
-<body class="h-full bg-surface-50 text-surface-900 font-sans">
+<body class="h-full bg-surface-900 text-surface-200 font-sans">
     <div class="min-h-full flex flex-col">
         {% include "components/navbar.html" %}
 
@@ -169,13 +169,13 @@
         </div>
 
         <!-- Footer -->
-        <footer class="border-t border-surface-200 px-6 py-4 bg-surface-0">
+        <footer class="border-t border-surface-700 px-6 py-4 bg-surface-800">
             <div class="max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-2">
                 <p class="text-xs text-surface-400">{{ LEGAL_DISCLAIMER }}</p>
                 <div class="flex items-center gap-3 text-xs text-surface-400">
                     {% if ORGANIZATION_NAME %}
-                    <span class="text-surface-600 font-medium">{{ ORGANIZATION_NAME }}</span>
-                    <span class="text-surface-300">|</span>
+                    <span class="text-surface-300 font-medium">{{ ORGANIZATION_NAME }}</span>
+                    <span class="text-surface-600">|</span>
                     {% endif %}
                     <span>Contract Dashboard v2.0</span>
                 </div>

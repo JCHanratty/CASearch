@@ -1,16 +1,16 @@
 {% if ai_result %}
     {% if ai_result.error %}
-    <div class="bg-surface-0 border border-red-200 rounded-lg p-5 text-center">
+    <div class="bg-surface-800 border border-red-800/50 rounded-lg p-5 text-center">
         <i data-lucide="alert-circle" class="w-10 h-10 text-red-400 mx-auto"></i>
-        <h3 class="mt-2 text-sm font-serif font-medium text-red-800">Analysis Error</h3>
-        <p class="mt-1 text-sm font-sans text-red-700">{{ ai_result.error }}</p>
+        <h3 class="mt-2 text-sm font-serif font-medium text-red-400">Analysis Error</h3>
+        <p class="mt-1 text-sm font-sans text-red-400">{{ ai_result.error }}</p>
     </div>
 
     {% elif ai_result.analysis %}
     <div class="space-y-3">
         <!-- AI Analysis Card -->
-        <div class="bg-surface-0 border border-surface-200 rounded-lg overflow-hidden">
-            <div class="px-4 py-2.5 bg-surface-900 border-b border-surface-200">
+        <div class="bg-surface-800 border border-surface-700 rounded-lg overflow-hidden">
+            <div class="px-4 py-2.5 bg-surface-900 border-b border-surface-700">
                 <h3 class="text-sm font-serif font-semibold text-surface-0 flex items-center">
                     <i data-lucide="sparkles" class="w-4 h-4 mr-2 text-copper-600"></i>
                     AI Analysis: {{ ai_result.query | default('Search Results') }}
@@ -18,7 +18,7 @@
             </div>
 
             <div class="p-4">
-                <div class="text-sm font-sans text-surface-700 leading-relaxed">
+                <div class="text-sm font-sans text-surface-200 leading-relaxed">
                     {{ ai_result.analysis | render_ai_markdown }}
                 </div>
             </div>
@@ -26,19 +26,19 @@
 
         <!-- Sources (Collapsible) -->
         {% if ai_result.sources %}
-        <details class="bg-surface-0 border border-surface-200 rounded-lg">
-            <summary class="px-4 py-2.5 cursor-pointer bg-surface-50 hover:bg-surface-100 flex items-center justify-between text-xs font-sans font-medium text-surface-600 list-none transition-colors">
+        <details class="bg-surface-800 border border-surface-700 rounded-lg">
+            <summary class="px-4 py-2.5 cursor-pointer bg-surface-900 hover:bg-surface-700 flex items-center justify-between text-xs font-sans font-medium text-surface-300 list-none transition-colors">
                 <span class="flex items-center">
                     <i data-lucide="file-text" class="w-3.5 h-3.5 mr-1.5 text-surface-400"></i>
                     Source Documents ({{ ai_result.sources | length }} pages) &mdash; Click to fact-check
                 </span>
                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-surface-400"></i>
             </summary>
-            <div class="px-4 py-3 border-t border-surface-200 space-y-1">
+            <div class="px-4 py-3 border-t border-surface-700 space-y-1">
                 {% for source in ai_result.sources %}
-                <a href="/documents/{{ source.file_id }}/view?page={{ source.page_number }}&highlight={{ ai_result.query | urlencode }}" class="flex items-center px-2 py-1.5 rounded bg-surface-50 hover:bg-copper-600/5 border border-surface-200 hover:border-copper-600/30 text-xs font-sans transition-colors">
-                    <span class="font-medium text-surface-700">{{ source.filename }}</span>
-                    <span class="ml-auto text-surface-500 whitespace-nowrap">Page {{ source.page_number }}</span>
+                <a href="/documents/{{ source.file_id }}/view?page={{ source.page_number }}&highlight={{ ai_result.query | urlencode }}" class="flex items-center px-2 py-1.5 rounded bg-surface-900 hover:bg-copper-600/5 border border-surface-700 hover:border-copper-600/30 text-xs font-sans transition-colors">
+                    <span class="font-medium text-surface-200">{{ source.filename }}</span>
+                    <span class="ml-auto text-surface-400 whitespace-nowrap">Page {{ source.page_number }}</span>
                 </a>
                 {% endfor %}
             </div>
@@ -47,16 +47,16 @@
     </div>
 
     {% else %}
-    <div class="bg-surface-50 border border-surface-200 rounded-lg p-6 text-center">
-        <h3 class="text-sm font-serif font-medium text-surface-800">No Analysis Available</h3>
-        <p class="mt-1 text-xs font-sans text-surface-600">Try again or check your input.</p>
+    <div class="bg-surface-900 border border-surface-700 rounded-lg p-6 text-center">
+        <h3 class="text-sm font-serif font-medium text-surface-100">No Analysis Available</h3>
+        <p class="mt-1 text-xs font-sans text-surface-300">Try again or check your input.</p>
     </div>
     {% endif %}
 
 {% else %}
-<div class="bg-surface-0 border border-surface-200 rounded-lg p-6 text-center">
+<div class="bg-surface-800 border border-surface-700 rounded-lg p-6 text-center">
     <i data-lucide="sparkles" class="w-8 h-8 text-surface-300 mx-auto"></i>
-    <h3 class="mt-2 text-sm font-serif font-medium text-surface-800">AI-Powered Search</h3>
-    <p class="mt-1 text-xs font-sans text-surface-600">Enter a query to get AI analysis of relevant contract language.</p>
+    <h3 class="mt-2 text-sm font-serif font-medium text-surface-100">AI-Powered Search</h3>
+    <p class="mt-1 text-xs font-sans text-surface-300">Enter a query to get AI analysis of relevant contract language.</p>
 </div>
 {% endif %}
