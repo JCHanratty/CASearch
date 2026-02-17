@@ -28,6 +28,10 @@ a = Analysis(
         'uvicorn.protocols.http.auto',
         'uvicorn.protocols.http.h11_impl',
         'uvicorn.protocols.websockets.auto',
+        # pywebview + Windows EdgeChromium backend
+        'webview',
+        'clr_loader',
+        'pythonnet',
     ],
     hookspath=[],
     hooksconfig={},
@@ -54,5 +58,5 @@ exe = EXE(
     strip=False,
     upx=True,
     upx_exclude=[],
-    console=True,
+    console=False,
 )

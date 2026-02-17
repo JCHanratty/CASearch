@@ -1,9 +1,9 @@
-"""PyInstaller entry point for CASearch."""
+"""PyInstaller entry point for CASearch — native desktop window."""
 
 import os
 import sys
 import threading
-import webbrowser
+import time
 
 
 def main():
@@ -19,23 +19,43 @@ def main():
         sys.path.insert(0, base_path)
 
     import uvicorn
+    import webview
 
     host = "127.0.0.1"
     port = 8000
     url = f"http://{host}:{port}"
 
-    # Open browser after a short delay to let the server start
-    threading.Timer(1.5, lambda: webbrowser.open(url)).start()
+    # Start uvicorn in a background thread
+    server_thread = threading.Thread(
+        target=uvicorn.run,
+        args=("app.main:app",),
+        kwargs={"host": host, "port": port, "log_level": "warning"},
+        daemon=True,
+    )
+    server_thread.start()
 
-    print(f"[CASearch] Starting server at {url}")
-    print("[CASearch] Press Ctrl+C to stop")
+    # Wait for server to be ready
+    import urllib.request
+    for _ in range(30):
+        try:
+            urllib.request.urlopen(f"{url}/admin/health", timeout=1)
+            break
+        except Exception:
+            time.sleep(0.3)
 
-    uvicorn.run("app.main:app", host=host, port=port)
+    # Open native desktop window
+    window = webview.create_window(
+        "Contract Dashboard",
+        url,
+        width=1280,
+        height=860,
+        min_size=(900, 600),
+    )
+    webview.start()
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n[CASearch] Shutting down...")
         sys.exit(0)
