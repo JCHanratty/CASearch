@@ -65,7 +65,7 @@ def check_for_update(current_version: str) -> dict:
         # Find Windows zip asset
         for asset in best_release.get("assets", []):
             name = asset.get("name", "")
-            if "casearch-windows" in name.lower() and name.endswith(".zip"):
+            if "casearch-windows" in name.lower() and name.endswith(".exe"):
                 result["download_url"] = asset.get("browser_download_url")
                 break
 
