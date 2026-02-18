@@ -12,6 +12,7 @@ a = Analysis(
     datas=[
         ('templates', 'templates'),
         ('static', 'static'),
+        ('.env', '.'),
     ],
     hiddenimports=[
         'app.routes.dashboard',
