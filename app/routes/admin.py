@@ -39,7 +39,11 @@ router = APIRouter()
 async def login_page(request: FastAPIRequest):
     """Admin login page."""
     if not admin_enabled():
-        return RedirectResponse("/", status_code=303)
+        return templates.TemplateResponse(
+            "admin_login.html",
+            {"request": request, "page_title": "Admin Login",
+             "error": "Admin access is not configured. Set ADMIN_PASSWORD in .env to enable."},
+        )
     if verify_session(request):
         return RedirectResponse("/admin/panel", status_code=303)
     return templates.TemplateResponse(
