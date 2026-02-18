@@ -61,4 +61,5 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     console=False,
+    icon='static/icon.ico',
 )
