@@ -281,10 +281,26 @@ async def publish_index(request: FastAPIRequest):
 
 @router.get("/update-modal", response_class=HTMLResponse)
 async def update_modal(request: FastAPIRequest, version: str = ""):
-    """Return the update modal HTML fragment."""
+    """Return the index update modal HTML fragment."""
     return templates.TemplateResponse(
         "components/update_modal.html",
         {"request": request, "version": version},
+    )
+
+
+@router.get("/app-update-modal", response_class=HTMLResponse)
+async def app_update_modal(request: FastAPIRequest):
+    """Return the app update modal HTML fragment."""
+    update = getattr(request.app.state, "update_info", None) or {}
+    return templates.TemplateResponse(
+        "components/app_update_modal.html",
+        {
+            "request": request,
+            "version": update.get("latest_version", ""),
+            "current_version": update.get("current_version", ""),
+            "release_notes": update.get("release_notes", ""),
+            "download_url": update.get("download_url") or update.get("html_url", ""),
+        },
     )
 
 

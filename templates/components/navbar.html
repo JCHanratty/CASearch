@@ -37,12 +37,15 @@
                 <!-- Update available indicator -->
                 {% set update = update_info() %}
                 {% if update and update.available %}
-                <a href="{{ update.html_url }}" target="_blank" rel="noopener"
-                   class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-copper-400 hover:text-copper-300 hover:bg-surface-700 transition-colors text-sm"
-                   title="Update available: {{ update.latest_version }}">
+                <button type="button"
+                        hx-get="/admin/app-update-modal"
+                        hx-target="#modal-root"
+                        hx-swap="innerHTML"
+                        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-copper-400 hover:text-copper-300 hover:bg-surface-700 transition-colors text-sm"
+                        title="Update available: {{ update.latest_version }}">
                     <i data-lucide="download" class="w-3.5 h-3.5"></i>
                     <span>{{ update.latest_version }}</span>
-                </a>
+                </button>
                 {% endif %}
 
                 <!-- Diagnostics -->
