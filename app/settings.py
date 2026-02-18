@@ -1,9 +1,18 @@
 """Application configuration from environment variables."""
 
+import sys
 from pathlib import Path
 from pydantic_settings import BaseSettings
 
 from app.version import __version__
+
+
+def _resolve_env_file() -> Path:
+    """Find .env next to the .exe (frozen) or in the project root (dev)."""
+    if getattr(sys, "frozen", False):
+        # PyInstaller: .env lives next to the .exe, not in the temp folder
+        return Path(sys.executable).parent / ".env"
+    return Path(__file__).parent.parent / ".env"
 
 
 class Settings(BaseSettings):
@@ -52,7 +61,7 @@ class Settings(BaseSettings):
     ]
 
     class Config:
-        env_file = ".env"
+        env_file = str(_resolve_env_file())
         env_file_encoding = "utf-8"
 
 
