@@ -224,5 +224,26 @@
     </script>
 
     <script src="/static/js/search.js"></script>
+
+    <!-- Index update polling -->
+    <script>
+    (function() {
+        let checkInterval = 60000; // 60 seconds
+        function checkForIndexUpdate() {
+            if (window._updateDismissed) return;
+            fetch('/admin/check-index-update')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.pending && !window._updateDismissed) {
+                        htmx.ajax('GET', '/admin/update-modal?version=' + (data.version || ''), {target: '#modal-root', swap: 'innerHTML'});
+                    }
+                })
+                .catch(() => {});
+        }
+        // Check after initial load, then periodically
+        setTimeout(checkForIndexUpdate, 5000);
+        setInterval(checkForIndexUpdate, checkInterval);
+    })();
+    </script>
 </body>
 </html>

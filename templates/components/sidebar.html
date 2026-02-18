@@ -57,6 +57,20 @@
             <span>Diagnostics</span>
         </a>
 
+        {% if is_admin(request) %}
+        <a href="/admin/panel"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors {% if page_title == 'Admin Panel' %}bg-surface-800 text-copper-400 font-medium{% else %}text-copper-600 hover:bg-surface-800/60 hover:text-copper-400{% endif %}">
+            <i data-lucide="shield" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Admin</span>
+        </a>
+        {% elif admin_enabled() %}
+        <a href="/admin/login"
+           class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-surface-500 hover:bg-surface-800/60 hover:text-surface-300">
+            <i data-lucide="lock" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Admin Login</span>
+        </a>
+        {% endif %}
+
         <!-- Search Settings -->
         <div class="border-t border-surface-700 my-3"></div>
         <div class="px-1">

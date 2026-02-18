@@ -23,6 +23,8 @@ a = Analysis(
         'app.routes.diagnostics',
         'app.routes.admin_synonyms',
         'app.routes.tutorial',
+        'app.routes.admin',
+        'itsdangerous',
         'uvicorn.logging',
         'uvicorn.lifespan.on',
         'uvicorn.protocols.http.auto',

@@ -30,6 +30,16 @@ def _get_update_info():
 templates.env.globals["update_info"] = _get_update_info
 
 
+def _is_admin_check():
+    """Return the is_admin function for use in templates."""
+    from app.services.auth import is_admin, admin_enabled
+    return is_admin
+
+
+templates.env.globals["is_admin"] = _is_admin_check()
+templates.env.globals["admin_enabled"] = lambda: bool(settings.ADMIN_PASSWORD)
+
+
 def regex_replace(value: str, pattern: str, replacement: str) -> str:
     """Custom Jinja2 filter for regex replacement."""
     if value is None:

@@ -267,3 +267,119 @@ async def async_ensure_latest_index() -> dict:
     For true async, would need aiohttp or similar (avoided per requirements).
     """
     return ensure_latest_index()
+
+
+# ---------------------------------------------------------------------------
+# Index-specific update checking (for app.db distribution)
+# ---------------------------------------------------------------------------
+
+def _read_local_index_version() -> str:
+    """Read current local index version from file."""
+    version_file = Path("data/index_version.txt")
+    if version_file.exists():
+        return version_file.read_text().strip()
+    return "0.0.0"
+
+
+def check_for_index_update() -> dict:
+    """
+    Check GitHub releases for a newer index package.
+
+    Looks for releases tagged 'index-vX.Y.Z' with a .zip asset.
+
+    Returns:
+        dict with available, current_version, latest_version, asset info
+    """
+    result = {
+        "available": False,
+        "current_version": _read_local_index_version(),
+        "latest_version": None,
+        "asset": None,
+        "error": None,
+    }
+
+    try:
+        url = f"https://api.github.com/repos/{settings.GITHUB_REPO}/releases?per_page=20"
+        headers = {"Accept": "application/vnd.github.v3+json"}
+        if settings.GITHUB_TOKEN:
+            headers["Authorization"] = f"token {settings.GITHUB_TOKEN}"
+
+        req = Request(url, headers=headers)
+        with urlopen(req, timeout=30) as response:
+            releases = json.loads(response.read().decode("utf-8"))
+
+        # Find highest index-v* release
+        best_version = parse_version(result["current_version"])
+        best_release = None
+
+        for release in releases:
+            if release.get("draft") or release.get("prerelease"):
+                continue
+            tag = release.get("tag_name", "")
+            if not tag.startswith("index-v"):
+                continue
+
+            version_str = tag.replace("index-v", "")
+            version_tuple = parse_version(version_str)
+
+            if version_tuple > best_version:
+                best_version = version_tuple
+                best_release = release
+
+        if best_release:
+            tag = best_release["tag_name"]
+            version_str = tag.replace("index-v", "")
+            result["latest_version"] = version_str
+            result["available"] = True
+
+            # Find zip asset
+            asset = find_index_asset(best_release, pattern="index")
+            result["asset"] = asset
+
+    except Exception as e:
+        result["error"] = str(e)
+
+    return result
+
+
+def download_index_to_staging(index_status: dict) -> dict:
+    """
+    Download index zip to staging directory for later application.
+
+    Args:
+        index_status: Result from check_for_index_update()
+
+    Returns:
+        dict with downloaded bool and path
+    """
+    result = {"downloaded": False, "error": None}
+
+    asset = index_status.get("asset")
+    if not asset:
+        result["error"] = "No asset to download"
+        return result
+
+    try:
+        staging_dir = Path("data/pending_update")
+        staging_dir.mkdir(parents=True, exist_ok=True)
+
+        print(f"[Updater] Downloading index to staging...")
+        zip_path = download_index_asset(asset, dest_dir=staging_dir)
+
+        # Extract zip to staging
+        apply_index_update(zip_path, staging_dir)
+
+        # Cleanup zip (keep extracted files)
+        try:
+            zip_path.unlink()
+        except Exception:
+            pass
+
+        result["downloaded"] = True
+        print(f"[Updater] Index staged at {staging_dir}")
+
+    except UpdateError as e:
+        result["error"] = str(e)
+        print(f"[Updater] Staging download failed: {e}")
+
+    return result

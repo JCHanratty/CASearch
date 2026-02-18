@@ -1,0 +1,30 @@
+{% if errors %}
+<div class="p-3 bg-red-900/20 border border-red-800/50 rounded-lg">
+    {% for err in errors %}
+    <p class="text-sm text-red-400 flex items-center">
+        <i data-lucide="alert-circle" class="w-4 h-4 mr-2 flex-shrink-0"></i>
+        {{ err }}
+    </p>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if uploaded %}
+<div class="p-3 bg-green-900/20 border border-green-700/50 rounded-lg">
+    <p class="text-sm text-green-400 flex items-center">
+        <i data-lucide="check-circle" class="w-4 h-4 mr-2 flex-shrink-0"></i>
+        Uploaded {{ uploaded|length }} file{{ 's' if uploaded|length > 1 else '' }}
+    </p>
+    <ul class="mt-1.5 space-y-0.5">
+        {% for name in uploaded %}
+        <li class="text-xs text-green-400/70 ml-6">{{ name }}</li>
+        {% endfor %}
+    </ul>
+    {% if scan_results %}
+    <p class="text-xs text-surface-400 mt-2">
+        Scan found {{ scan_results.new|default(0) }} new file(s).
+        Go to Documents table to index them.
+    </p>
+    {% endif %}
+</div>
+{% endif %}

@@ -1,0 +1,171 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-serif text-surface-100">Admin Panel</h1>
+            <p class="text-sm text-surface-400 mt-1">Manage documents and publish updates</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs text-surface-500 bg-surface-800 border border-surface-700 px-3 py-1.5 rounded-full">
+                Index v{{ index_version }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="bg-surface-800 border border-surface-700 rounded-lg overflow-hidden">
+        <div class="px-5 py-4 border-b border-surface-700">
+            <h2 class="text-lg font-serif text-surface-100 flex items-center">
+                <i data-lucide="upload" class="w-5 h-5 mr-2 text-copper-400"></i>
+                Upload Documents
+            </h2>
+        </div>
+        <div class="p-5">
+            <form hx-post="/admin/upload"
+                  hx-target="#upload-result"
+                  hx-swap="innerHTML"
+                  hx-encoding="multipart/form-data"
+                  class="space-y-4">
+
+                <!-- Drop zone -->
+                <div id="drop-zone"
+                     class="border-2 border-dashed border-surface-600 rounded-lg p-8 text-center hover:border-copper-600/50 transition-colors cursor-pointer"
+                     onclick="document.getElementById('file-input').click()">
+                    <i data-lucide="file-up" class="w-10 h-10 text-surface-500 mx-auto mb-3"></i>
+                    <p class="text-sm text-surface-300">Drop PDF files here or click to browse</p>
+                    <p class="text-xs text-surface-500 mt-1">Max 50MB per file</p>
+                    <input type="file"
+                           id="file-input"
+                           name="files"
+                           accept=".pdf"
+                           multiple
+                           class="hidden"
+                           onchange="updateFileList(this)">
+                </div>
+
+                <!-- Selected files display -->
+                <div id="selected-files" class="hidden">
+                    <p class="text-xs text-surface-400 mb-2">Selected files:</p>
+                    <div id="file-list" class="space-y-1"></div>
+                </div>
+
+                <button type="submit"
+                        class="px-4 py-2 bg-copper-600 text-white text-sm font-medium rounded-lg hover:bg-copper-500 transition-colors">
+                    <i data-lucide="upload" class="w-4 h-4 inline mr-1"></i>
+                    Upload & Scan
+                </button>
+            </form>
+
+            <div id="upload-result" class="mt-4"></div>
+        </div>
+    </div>
+
+    <!-- Documents Section -->
+    <div class="bg-surface-800 border border-surface-700 rounded-lg overflow-hidden">
+        <div class="px-5 py-4 border-b border-surface-700 flex items-center justify-between">
+            <h2 class="text-lg font-serif text-surface-100 flex items-center">
+                <i data-lucide="files" class="w-5 h-5 mr-2 text-copper-400"></i>
+                Documents
+                <span class="ml-2 text-xs text-surface-400 font-sans">({{ documents|length }})</span>
+            </h2>
+            <button hx-post="/admin/scan-and-index"
+                    hx-target="#admin-docs-table"
+                    hx-swap="innerHTML"
+                    class="px-3 py-1.5 text-xs text-surface-300 border border-surface-600 rounded-lg hover:bg-surface-700 transition-colors">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5 inline mr-1"></i>
+                Scan & Index All
+            </button>
+        </div>
+        <div id="admin-docs-table">
+            {% include "components/admin_documents_table.html" %}
+        </div>
+    </div>
+
+    <!-- Publish Section -->
+    <div class="bg-surface-800 border border-surface-700 rounded-lg overflow-hidden">
+        <div class="px-5 py-4 border-b border-surface-700">
+            <h2 class="text-lg font-serif text-surface-100 flex items-center">
+                <i data-lucide="send" class="w-5 h-5 mr-2 text-copper-400"></i>
+                Publish to Users
+            </h2>
+        </div>
+        <div class="p-5">
+            <p class="text-sm text-surface-400 mb-4">
+                Package the current database and upload to GitHub Releases.
+                All users will receive the update on next restart.
+            </p>
+
+            {% if not github_token_set %}
+            <div class="p-3 bg-yellow-900/20 border border-yellow-700/50 rounded-lg mb-4">
+                <p class="text-sm text-yellow-400 flex items-center">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 mr-2 flex-shrink-0"></i>
+                    GITHUB_TOKEN not set in .env — publishing is disabled.
+                </p>
+            </div>
+            {% endif %}
+
+            <div class="flex items-center gap-4">
+                <button hx-post="/admin/publish"
+                        hx-target="#publish-result"
+                        hx-swap="innerHTML"
+                        hx-confirm="Publish current database to all users?"
+                        {% if not github_token_set %}disabled{% endif %}
+                        class="px-4 py-2 bg-copper-600 text-white text-sm font-medium rounded-lg hover:bg-copper-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i data-lucide="rocket" class="w-4 h-4 inline mr-1"></i>
+                    Publish Index
+                </button>
+                <span class="text-xs text-surface-500">Current: v{{ index_version }}</span>
+            </div>
+
+            <div id="publish-result" class="mt-4"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// File list display
+function updateFileList(input) {
+    const container = document.getElementById('selected-files');
+    const list = document.getElementById('file-list');
+    list.innerHTML = '';
+
+    if (input.files.length > 0) {
+        container.classList.remove('hidden');
+        Array.from(input.files).forEach(f => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-2 text-xs text-surface-300 bg-surface-900 px-3 py-1.5 rounded';
+            div.innerHTML = `<i data-lucide="file" class="w-3.5 h-3.5 text-copper-400"></i> ${f.name} <span class="text-surface-500">(${(f.size / 1024 / 1024).toFixed(1)} MB)</span>`;
+            list.appendChild(div);
+        });
+        lucide.createIcons();
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
+// Drag and drop
+const dropZone = document.getElementById('drop-zone');
+if (dropZone) {
+    ['dragenter', 'dragover'].forEach(e => {
+        dropZone.addEventListener(e, (ev) => {
+            ev.preventDefault();
+            dropZone.classList.add('border-copper-500', 'bg-copper-900/10');
+        });
+    });
+    ['dragleave', 'drop'].forEach(e => {
+        dropZone.addEventListener(e, (ev) => {
+            ev.preventDefault();
+            dropZone.classList.remove('border-copper-500', 'bg-copper-900/10');
+        });
+    });
+    dropZone.addEventListener('drop', (ev) => {
+        const input = document.getElementById('file-input');
+        input.files = ev.dataTransfer.files;
+        updateFileList(input);
+    });
+}
+</script>
+{% endblock %}

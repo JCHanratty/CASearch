@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     GITHUB_REPO: str = "JCHanratty/CASearch"
     APP_VERSION: str = __version__
 
+    # Admin settings
+    ADMIN_PASSWORD: str = ""
+    GITHUB_TOKEN: str = ""
+
     # Bug report GitHub integration
     BUGREPORT_CREATE_ISSUE: bool = False
     BUGREPORT_GITHUB_REPO: str = ""  # e.g. owner/repo

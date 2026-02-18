@@ -1,0 +1,53 @@
+<!-- Index Update Modal -->
+<div class="fixed inset-0 bg-surface-900/60 backdrop-blur-sm flex items-center justify-center z-50" id="update-modal">
+    <div class="bg-surface-800 border border-surface-700 rounded-lg shadow-lg w-full max-w-md mx-4 overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-surface-700 bg-surface-900">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-serif font-semibold text-surface-100 flex items-center">
+                    <i data-lucide="download" class="w-5 h-5 mr-2 text-copper-400"></i>
+                    Update Available
+                </h2>
+                <button type="button"
+                        onclick="dismissUpdateModal()"
+                        class="text-surface-400 hover:text-surface-300 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6">
+            <p class="text-sm text-surface-200 mb-2">
+                New documents are available <span class="text-copper-400 font-medium">(v{{ version }})</span>.
+            </p>
+            <p class="text-xs text-surface-400 mb-6">
+                The update has been downloaded. Restart the application to apply the new documents.
+            </p>
+
+            <div class="flex items-center justify-end gap-3">
+                <button type="button"
+                        onclick="dismissUpdateModal()"
+                        class="px-4 py-2 text-sm text-surface-300 hover:text-surface-100 transition-colors">
+                    Later
+                </button>
+                <button type="button"
+                        hx-post="/admin/apply-update"
+                        hx-target="#update-modal"
+                        hx-swap="innerHTML"
+                        class="px-4 py-2 bg-copper-600 text-white text-sm font-medium rounded-lg hover:bg-copper-500 transition-colors">
+                    <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-1"></i>
+                    Restart Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function dismissUpdateModal() {
+    document.getElementById('modal-root').innerHTML = '';
+    // Don't show again this session
+    window._updateDismissed = true;
+}
+</script>

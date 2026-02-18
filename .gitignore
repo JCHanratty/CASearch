@@ -38,6 +38,9 @@ data/agreements/*
 !data/agreements/.gitkeep
 data/index/
 data/*.db
+data/index_version.txt
+data/pending_update/
+data/publish_staging/
 
 # IDE
 .idea/
