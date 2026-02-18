@@ -52,15 +52,30 @@
                     <span>Diagnostics</span>
                 </a>
 
-                {% if is_admin(request) %}
-                <!-- Admin Logout -->
-                <form method="POST" action="/admin/logout" class="hidden sm:block">
-                    <button type="submit"
-                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-surface-400 hover:text-red-400 hover:bg-surface-700 transition-colors text-sm">
-                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                        <span>Logout</span>
-                    </button>
-                </form>
+                {% if admin_enabled() %}
+                    {% if is_admin(request) %}
+                    <!-- Admin Panel -->
+                    <a href="/admin/panel"
+                       class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-copper-400 hover:text-copper-300 hover:bg-surface-700 transition-colors text-sm">
+                        <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                        <span>Admin</span>
+                    </a>
+                    <!-- Admin Logout -->
+                    <form method="POST" action="/admin/logout" class="hidden sm:block">
+                        <button type="submit"
+                                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-surface-400 hover:text-red-400 hover:bg-surface-700 transition-colors text-sm">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                    {% else %}
+                    <!-- Admin Login -->
+                    <a href="/admin/login"
+                       class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-surface-400 hover:text-surface-200 hover:bg-surface-700 transition-colors text-sm">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                        <span>Admin</span>
+                    </a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
