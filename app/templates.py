@@ -16,6 +16,7 @@ templates = Jinja2Templates(directory=str(templates_path))
 templates.env.globals["SUGGESTED_PROMPTS"] = get_suggested_prompts
 templates.env.globals["ORGANIZATION_NAME"] = settings.ORGANIZATION_NAME
 templates.env.globals["LEGAL_DISCLAIMER"] = settings.LEGAL_DISCLAIMER
+templates.env.globals["APP_VERSION"] = settings.APP_VERSION
 
 
 def _get_update_info():
