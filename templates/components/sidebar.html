@@ -88,24 +88,6 @@
             <p class="px-2 text-[10px] text-surface-600 leading-relaxed">Expand terms with related words</p>
         </div>
 
-        <!-- Suggested Prompts -->
-        <div class="border-t border-surface-700 my-3"></div>
-        <div class="px-1">
-            <p class="px-2 text-[10px] font-medium text-surface-500 uppercase tracking-widest mb-2">Quick Prompts</p>
-            <div class="space-y-0.5">
-                {% for prompt in SUGGESTED_PROMPTS() %}
-                <button type="button"
-                        onclick="usePrompt('{{ prompt | e }}')"
-                        class="w-full text-left px-2 py-1.5 rounded text-xs text-surface-500 hover:bg-surface-800/60 hover:text-surface-300 transition-colors truncate"
-                        title="{{ prompt }}">
-                    {{ prompt[:40] }}{% if prompt|length > 40 %}...{% endif %}
-                </button>
-                {% endfor %}
-            </div>
-            <a href="/tutorial" class="block mt-2 px-2 text-[10px] text-surface-600 hover:text-surface-400 transition-colors">
-                View all prompts
-            </a>
-        </div>
     </nav>
 
     <!-- Version -->
@@ -113,17 +95,4 @@
         <p class="text-[10px] text-surface-600">Contract Dashboard v2.0</p>
     </div>
 
-    <script>
-    function usePrompt(text) {
-        const q = document.getElementById('question');
-        if (q) {
-            q.value = text;
-            q.focus();
-            q.dispatchEvent(new Event('input'));
-        } else {
-            sessionStorage.setItem('pendingPrompt', text);
-            window.location.href = '/qa';
-        }
-    }
-    </script>
 </aside>

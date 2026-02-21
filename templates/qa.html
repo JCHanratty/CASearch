@@ -41,6 +41,25 @@
                 </form>
             </div>
 
+            <!-- Quick Prompts -->
+            <div class="bg-surface-800 border border-surface-700 rounded-lg p-5">
+                <h3 class="text-sm font-sans font-medium text-surface-200 flex items-center mb-3">
+                    <i data-lucide="lightbulb" class="w-4 h-4 mr-2 text-copper-600"></i>
+                    Try a Suggested Prompt
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for prompt in SUGGESTED_PROMPTS() %}
+                    <button type="button"
+                            onclick="document.getElementById('question').value = this.getAttribute('data-prompt'); document.getElementById('question').focus();"
+                            data-prompt="{{ prompt | e }}"
+                            class="px-3 py-1.5 text-xs text-surface-300 bg-surface-900 border border-surface-700 rounded-full hover:border-copper-600 hover:text-copper-400 transition-colors truncate max-w-xs"
+                            title="{{ prompt }}">
+                        {{ prompt[:50] }}{% if prompt|length > 50 %}...{% endif %}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
             <!-- How it works -->
             <div class="bg-surface-900 border border-surface-700 rounded-lg p-5">
                 <h3 class="text-sm font-sans font-medium text-surface-200 flex items-center mb-3">
