@@ -8,9 +8,9 @@ from app.settings import settings
 class TestTutorialAndPrompts:
     """Tests for tutorial page and suggested prompts in sidebar."""
 
-    def test_sidebar_includes_suggested_prompts(self, client, test_db):
-        """Test GET / (dashboard) contains suggested prompts and usePrompt JS."""
-        response = client.get("/")
+    def test_qa_page_includes_suggested_prompts(self, client, test_db):
+        """Test GET /qa contains suggested prompts as clickable chips."""
+        response = client.get("/qa")
 
         assert response.status_code == 200
         html = response.text
@@ -18,14 +18,13 @@ class TestTutorialAndPrompts:
         # Should contain at least one of the suggestion strings
         found_prompt = False
         for prompt in settings.SUGGESTED_PROMPTS:
-            if prompt[:35] in html:  # Sidebar truncates at 35 chars
+            if prompt[:50] in html:  # Q&A page truncates at 50 chars
                 found_prompt = True
                 break
-        assert found_prompt, "Expected at least one suggested prompt in sidebar"
+        assert found_prompt, "Expected at least one suggested prompt on Q&A page"
 
-        # Should contain the usePrompt JavaScript function
-        assert "usePrompt(" in html
-        assert "function usePrompt" in html
+        # Should contain the prompt chip click handler
+        assert "data-prompt=" in html
 
     def test_tutorial_page_loads(self, client, test_db):
         """Test GET /tutorial returns 200 and contains Tutorial header and example prompts."""
@@ -62,18 +61,15 @@ class TestTutorialAndPrompts:
         assert "Q&amp;A Best Practices" in html or "Q&A Best Practices" in html
         assert "Comparing Contracts" in html
 
-    def test_sidebar_prompts_panel_on_qa_page(self, client, test_db):
-        """Test Q&A page also has the suggested prompts sidebar panel."""
+    def test_qa_page_has_suggested_prompt_section(self, client, test_db):
+        """Test Q&A page contains the 'Try a Suggested Prompt' section."""
         response = client.get("/qa")
 
         assert response.status_code == 200
         html = response.text
 
-        # Should contain Suggested Prompts section in sidebar
-        assert "Suggested Prompts" in html
-
-        # Should contain usePrompt function
-        assert "usePrompt(" in html
+        # Should contain the suggested prompt section heading
+        assert "Try a Suggested Prompt" in html
 
     def test_settings_has_suggested_prompts(self):
         """Test that settings contains SUGGESTED_PROMPTS with at least 6 items."""

@@ -88,7 +88,8 @@ def test_admin_health_json(client):
     assert "total_files" in data["db"]
     assert "indexed_files" in data["db"]
     assert "version" in data
-    assert data["version"] == "1.0.0"
+    from app.version import __version__
+    assert data["version"] == __version__
 
 
 def test_admin_fts_status_json(client):
