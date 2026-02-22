@@ -766,17 +766,20 @@ def _parallel_hybrid_retrieve(
             executor.submit(run_expanded),
         ]
 
-        for future in as_completed(futures):
-            try:
-                method, results, raw = future.result()
-                if results:
-                    all_results.append(results)
-                    # Keep semantic or chunk context for heading info
-                    if method in ("semantic", "chunk") and raw:
-                        context_results.extend(raw)
-            except Exception as e:
-                logger.warning(f"Retrieval strategy failed: {e}")
-                continue  # Skip failed strategies
+        try:
+            for future in as_completed(futures, timeout=30):
+                try:
+                    method, results, raw = future.result(timeout=10)
+                    if results:
+                        all_results.append(results)
+                        # Keep semantic or chunk context for heading info
+                        if method in ("semantic", "chunk") and raw:
+                            context_results.extend(raw)
+                except Exception as e:
+                    logger.warning(f"Retrieval strategy failed: {e}")
+                    continue
+        except TimeoutError:
+            logger.warning("Parallel retrieval timed out after 30s")
 
     if not all_results:
         return [], "none", []
@@ -1206,6 +1209,7 @@ Answer based ONLY on the excerpts above. If the answer is not in the excerpts, s
             max_tokens=4096,  # Increased for detailed responses
             system=system_prompt,  # Adaptive prompt based on query type
             messages=[{"role": "user", "content": user_message}],
+            timeout=60.0,
         )
 
         answer_text = response.content[0].text

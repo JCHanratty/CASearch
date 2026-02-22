@@ -432,6 +432,7 @@ Create your comparison using ONLY information from the text above. Do not add an
             max_tokens=4096,
             system=COMPARISON_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_message}],
+            timeout=60.0,
         )
 
         analysis_text = response.content[0].text

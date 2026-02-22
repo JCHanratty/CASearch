@@ -263,6 +263,7 @@ Respond with the JSON matrix only."""
         max_tokens=4096,
         system=MATRIX_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
+        timeout=90.0,
     )
 
     raw_text = response.content[0].text.strip()

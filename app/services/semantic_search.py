@@ -5,6 +5,7 @@ replacing the TF-IDF approach with transformer-based embeddings.
 """
 
 import logging
+import threading
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Callable
@@ -25,6 +26,29 @@ EMBEDDING_MODEL = "BAAI/bge-base-en-v1.5"
 COLLECTION_NAME = "contract_chunks_v2"  # New collection for new embedding model
 
 logger = logging.getLogger(__name__)
+
+
+def _with_timeout(func, timeout_seconds=15, default=None):
+    """Run a function with a timeout. Returns default if timeout exceeded."""
+    result = [default]
+    error = [None]
+
+    def target():
+        try:
+            result[0] = func()
+        except Exception as e:
+            error[0] = e
+
+    thread = threading.Thread(target=target, daemon=True)
+    thread.start()
+    thread.join(timeout=timeout_seconds)
+
+    if thread.is_alive():
+        logger.warning(f"{func.__name__ if hasattr(func, '__name__') else 'function'} timed out after {timeout_seconds}s")
+        return default
+    if error[0]:
+        raise error[0]
+    return result[0]
 
 
 @dataclass
@@ -55,7 +79,12 @@ def _get_embedding_model():
         try:
             from sentence_transformers import SentenceTransformer
             logger.info(f"Loading embedding model: {EMBEDDING_MODEL}")
-            _embedding_model = SentenceTransformer(EMBEDDING_MODEL)
+            _embedding_model = _with_timeout(
+                lambda: SentenceTransformer(EMBEDDING_MODEL),
+                timeout_seconds=30,
+            )
+            if _embedding_model is None:
+                raise TimeoutError("Embedding model load timed out")
             logger.info("Embedding model loaded successfully")
         except Exception as e:
             logger.error(f"Error loading embedding model: {e}")
