@@ -64,6 +64,28 @@ def test_normalize_text_crlf():
     assert "line three" in result
 
 
+def test_rejoin_spurious_spaces():
+    """normalize_text should rejoin single-letter splits like 'member s'."""
+    from app.services.pdf_extract import normalize_text
+
+    assert "members" in normalize_text("member s of the union")
+    assert "perform" in normalize_text("pe rform duties")
+    assert "qualifications of" in normalize_text("qualifications o f the")
+    # Should NOT join legitimate single-letter words
+    assert "a union" in normalize_text("a union")
+    assert "I am" in normalize_text("I am")
+
+
+def test_rejoin_preserves_normal_text():
+    """normalize_text should not alter correctly spaced text."""
+    from app.services.pdf_extract import normalize_text
+
+    text = "The employee shall receive overtime pay at 1.5 times the regular rate."
+    result = normalize_text(text)
+    assert "overtime" in result
+    assert "1.5 times" in result
+
+
 # ============================================================================
 # Header/Footer Detection Tests
 # ============================================================================

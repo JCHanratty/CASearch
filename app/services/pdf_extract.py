@@ -12,6 +12,52 @@ from pypdf import PdfReader
 
 logger = logging.getLogger(__name__)
 
+# Common 2-3 letter English words that should NOT be joined to adjacent words
+# by the spurious-split fixer.  Used by normalize_text() pattern 4.
+_COMMON_SHORT_WORDS: frozenset[str] = frozenset({
+    # 2-letter
+    'ad', 'ah', 'am', 'an', 'as', 'at', 'ax', 'be', 'by', 'do', 'go',
+    'ha', 'he', 'hi', 'ho', 'if', 'in', 'is', 'it', 'ma', 'me', 'mr',
+    'ms', 'my', 'no', 'of', 'oh', 'ok', 'on', 'or', 'ow', 'ox', 'so',
+    'to', 'up', 'us', 'we',
+    # 3-letter
+    'abs', 'ace', 'act', 'add', 'age', 'ago', 'aid', 'aim', 'air', 'all',
+    'and', 'any', 'apt', 'arc', 'are', 'ark', 'arm', 'art', 'ask', 'ate',
+    'bad', 'bag', 'ban', 'bar', 'bat', 'bay', 'bed', 'bet', 'bid', 'big',
+    'bit', 'bow', 'box', 'boy', 'bud', 'bug', 'bun', 'bus', 'but', 'buy',
+    'cab', 'can', 'cap', 'car', 'cat', 'cop', 'cow', 'cry', 'cup', 'cut',
+    'dad', 'dam', 'day', 'did', 'die', 'dig', 'dim', 'dip', 'dog', 'dot',
+    'dry', 'dub', 'due', 'dug', 'dye', 'ear', 'eat', 'egg', 'ego', 'end',
+    'era', 'eve', 'eye', 'fan', 'far', 'fat', 'fax', 'fed', 'fee', 'few',
+    'fig', 'fin', 'fit', 'fix', 'fly', 'fog', 'for', 'fox', 'fry', 'fun',
+    'fur', 'gap', 'gas', 'get', 'god', 'got', 'gum', 'gun', 'gut', 'guy',
+    'gym', 'had', 'ham', 'has', 'hat', 'hay', 'hen', 'her', 'hid', 'him',
+    'hip', 'his', 'hit', 'hog', 'hop', 'hot', 'how', 'hub', 'hug', 'hut',
+    'ice', 'icy', 'ill', 'ink', 'inn', 'ion', 'its', 'ivy', 'jam', 'jar',
+    'jaw', 'jay', 'jet', 'job', 'jog', 'joy', 'jug', 'key', 'kid', 'kin',
+    'kit', 'lab', 'lad', 'lag', 'lap', 'law', 'lay', 'led', 'leg', 'let',
+    'lid', 'lie', 'lip', 'lit', 'log', 'lot', 'low', 'mad', 'man', 'map',
+    'mat', 'max', 'may', 'men', 'met', 'mid', 'mix', 'mob', 'mod', 'mom',
+    'mop', 'mud', 'mug', 'nap', 'net', 'new', 'nil', 'nod', 'nor', 'not',
+    'now', 'nun', 'nut', 'oak', 'oar', 'oat', 'odd', 'off', 'oft', 'oil',
+    'old', 'one', 'opt', 'ore', 'our', 'out', 'owe', 'owl', 'own', 'pad',
+    'pal', 'pan', 'par', 'pat', 'paw', 'pay', 'pea', 'peg', 'pen', 'per',
+    'pet', 'pie', 'pig', 'pin', 'pit', 'ply', 'pod', 'pop', 'pot', 'pro',
+    'pry', 'pub', 'pun', 'pup', 'put', 'rag', 'ram', 'ran', 'rap', 'rat',
+    'raw', 'ray', 'red', 'ref', 'rib', 'rid', 'rig', 'rim', 'rip', 'rob',
+    'rod', 'rot', 'row', 'rub', 'rug', 'rum', 'run', 'rut', 'rye', 'sad',
+    'sag', 'sap', 'sat', 'saw', 'say', 'sea', 'set', 'sew', 'she', 'shy',
+    'sin', 'sip', 'sir', 'sis', 'sit', 'six', 'ski', 'sky', 'sly', 'sob',
+    'sod', 'son', 'sow', 'soy', 'spa', 'spy', 'sub', 'sue', 'sum', 'sun',
+    'tab', 'tag', 'tan', 'tap', 'tar', 'tax', 'tea', 'ten', 'the', 'thy',
+    'tie', 'tin', 'tip', 'toe', 'ton', 'too', 'top', 'tot', 'tow', 'toy',
+    'try', 'tub', 'tug', 'two', 'urn', 'use', 'van', 'vat', 'vet', 'via',
+    'vow', 'wad', 'wag', 'war', 'was', 'wax', 'way', 'web', 'wed', 'wet',
+    'who', 'why', 'wig', 'win', 'wit', 'woe', 'wok', 'won', 'woo', 'wow',
+    'yam', 'yap', 'yaw', 'yea', 'yes', 'yet', 'yew', 'you', 'zap', 'zen',
+    'zip', 'zoo',
+})
+
 
 @dataclass
 class TableData:
@@ -285,11 +331,45 @@ def normalize_text(text: str) -> str:
     Normalize text for consistent indexing.
 
     - Dehyphenates line-break splits
+    - Rejoins spurious single-letter splits from PDF extraction
     - Normalizes whitespace
     - Removes excessive blank lines
     """
     # First, dehyphenate
     text = dehyphenate(text)
+
+    # Rejoin spurious single-letter splits caused by PDF text extraction.
+    # These patterns fix broken words like "member s", "pe rform", "o f" that
+    # commonly occur when PDF renderers insert extra spaces mid-word.
+
+    # Pattern 1: two adjacent single lowercase letters - "o f" → "of"
+    # Must run first so pairs like "o f" are joined before other patterns
+    # consume them incorrectly.
+    text = re.sub(r'(?:(?<=\s)|(?<=^))([b-hj-z]) ([b-hj-z])(?=\s|[.,;:!?\)]|$)', r'\1\2', text)
+
+    # Pattern 2: trailing single letter on a word - "member s" → "members"
+    # Matches: 2+ word chars, space, single lowercase letter (not 'a'/'i'),
+    # followed by a space, punctuation, or end-of-string.
+    text = re.sub(r'(\w{2,}) ([b-hj-z])(?=\s|[.,;:!?\)]|$)', r'\1\2', text)
+
+    # Pattern 3: leading single letter before continuation - "e mployee" → "employee"
+    # Matches: single lowercase letter (not 'a'/'i') preceded by whitespace or
+    # start-of-string, followed by a space and 2+ lowercase chars.
+    text = re.sub(r'(?:(?<=\s)|(?<=^))([b-hj-z]) ([a-z]{2,})', r'\1\2', text)
+
+    # Pattern 4: short fragment (2-3 chars) before a longer continuation.
+    # "pe rform" → "perform". Uses a word list to avoid joining real short
+    # words like "do", "is", "no", "to" with the following word.
+    def _rejoin_short_fragment(m):
+        if m.group(1).lower() in _COMMON_SHORT_WORDS:
+            return m.group(0)  # preserve real words
+        return m.group(1) + m.group(2)
+
+    text = re.sub(
+        r'(?:(?<=\s)|(?<=^))([a-z]{2,3}) ([a-z]{3,})',
+        _rejoin_short_fragment,
+        text,
+    )
 
     # Normalize various whitespace characters
     text = text.replace('\r\n', '\n')
