@@ -1,0 +1,35 @@
+<!-- Progress Modal — included once in layout, controlled via JS -->
+<div id="progress-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-surface-900/70 backdrop-blur-sm"></div>
+
+    <!-- Modal card -->
+    <div class="relative bg-surface-800 border border-surface-700 rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 animate-fade-in">
+        <!-- Title -->
+        <h3 id="progress-title" class="text-lg font-serif text-surface-100 mb-4">Processing...</h3>
+
+        <!-- Progress bar -->
+        <div class="w-full bg-surface-700 rounded-full h-2.5 mb-3 overflow-hidden">
+            <div id="progress-bar"
+                 class="h-full rounded-full transition-all duration-300 ease-out"
+                 style="width: 0%; background: linear-gradient(90deg, #b45309, #d99a3a);">
+            </div>
+        </div>
+
+        <!-- Step description -->
+        <p id="progress-step" class="text-sm text-surface-400 mb-4">Initializing...</p>
+
+        <!-- Error area (hidden by default) -->
+        <div id="progress-error" class="hidden mt-3 p-3 bg-red-900/20 border border-red-800/50 rounded-lg">
+            <p id="progress-error-text" class="text-sm text-red-400"></p>
+        </div>
+
+        <!-- Close button (hidden while running) -->
+        <div id="progress-actions" class="hidden mt-4 flex justify-end">
+            <button onclick="ProgressModal.close()"
+                    class="px-4 py-2 text-sm bg-surface-700 hover:bg-surface-600 text-surface-200 rounded-lg transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+</div>

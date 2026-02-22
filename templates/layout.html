@@ -190,6 +190,8 @@
     <!-- Toast container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
+    {% include "components/progress_modal.html" %}
+
     <script>
     // Sidebar toggle
     function toggleSidebar() {
@@ -225,6 +227,7 @@
     </script>
 
     <script src="/static/js/search.js"></script>
+    <script src="/static/js/progress.js"></script>
 
     <!-- Index update polling -->
     <script>
