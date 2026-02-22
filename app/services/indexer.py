@@ -13,7 +13,7 @@ from app.services.structure_extract import extract_with_structure
 logger = logging.getLogger(__name__)
 
 
-def index_file(file_id: int, use_structure: bool = True, build_embeddings: bool = False) -> dict:
+def index_file(file_id: int, use_structure: bool = True, build_embeddings: bool = True) -> dict:
     """
     Extract PDF text and populate pdf_pages + FTS5 index.
     Also creates semantic chunks with heading metadata.
@@ -21,7 +21,7 @@ def index_file(file_id: int, use_structure: bool = True, build_embeddings: bool 
     Args:
         file_id: Database ID of the file to index
         use_structure: Whether to use structure-aware extraction (default True)
-        build_embeddings: Whether to build semantic embeddings (default False for speed)
+        build_embeddings: Whether to build semantic embeddings (default True)
 
     Returns:
         dict with status, page count, and chunk count
@@ -249,7 +249,7 @@ def reindex_all() -> dict:
 
     for row in rows:
         try:
-            index_file(row["id"])
+            index_file(row["id"], build_embeddings=True)
             results["success"] += 1
         except Exception as e:
             results["failed"] += 1

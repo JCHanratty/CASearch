@@ -202,7 +202,7 @@ async def scan_and_index(request: FastAPIRequest):
     for doc in documents:
         if doc.status == "pending":
             try:
-                index_file(doc.id)
+                index_file(doc.id, build_embeddings=True)
                 indexed += 1
             except Exception as e:
                 logger.warning("Failed to index %s: %s", doc.filename, e)
