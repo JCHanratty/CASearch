@@ -140,4 +140,30 @@
         if (e.target.classList.contains('doc-checkbox')) updateSelectedCount();
     });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('matrix-form');
+    if (form && typeof ProgressModal !== 'undefined') {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            var formData = new FormData(form);
+            var resultTarget = document.getElementById('matrix-results');
+
+            ProgressModal.start('/matrix/compare-stream', {
+                method: 'POST',
+                body: formData,
+                title: 'Building Comparison Matrix',
+                onComplete: function(data) {
+                    if (data.html && resultTarget) {
+                        resultTarget.innerHTML = data.html;
+                        if (window.lucide) lucide.createIcons();
+                    }
+                }
+            });
+        }, true);
+    }
+});
+</script>
 {% endblock %}

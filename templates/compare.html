@@ -154,4 +154,39 @@
         {% endif %}
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('compare-form');
+    if (form && typeof ProgressModal !== 'undefined') {
+        form.addEventListener('submit', function(e) {
+            // Only intercept for AI mode
+            var aiRadio = document.getElementById('mode-ai');
+            if (!aiRadio || !aiRadio.checked) return; // Let HTMX handle text mode
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            // Build query string from form data
+            var formData = new FormData(form);
+            var params = new URLSearchParams();
+            for (var pair of formData.entries()) {
+                params.append(pair[0], pair[1]);
+            }
+
+            var resultTarget = document.getElementById('compare-results');
+
+            ProgressModal.start('/compare/results-stream?' + params.toString(), {
+                method: 'GET',
+                title: 'Comparing Documents',
+                onComplete: function(data) {
+                    if (data.html && resultTarget) {
+                        resultTarget.innerHTML = data.html;
+                        if (window.lucide) lucide.createIcons();
+                    }
+                }
+            });
+        }, true);
+    }
+});
+</script>
 {% endblock %}

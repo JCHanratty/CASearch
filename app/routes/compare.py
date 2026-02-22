@@ -1,8 +1,10 @@
 """Compare routes - side-by-side document comparison."""
 
+import json
 from typing import Optional
+
 from fastapi import APIRouter, Request, Query
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response, StreamingResponse
 
 from app.db import get_db
 from app.services.compare import compare_documents, compare_documents_multi
@@ -104,6 +106,54 @@ async def compare_results(
             "mode": mode,
             "page_title": "Compare",
         },
+    )
+
+
+@router.get("/results-stream")
+async def compare_results_stream(
+    request: Request,
+    topic: str = "",
+    doc_ids: list[int] = Query(None),
+):
+    """SSE streaming AI comparison with progress."""
+    async def event_stream():
+        def send(event_type, data):
+            return f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
+
+        if not doc_ids or len(doc_ids) < 2:
+            yield send("error", {"message": "Select at least 2 documents to compare."})
+            return
+
+        if not topic.strip():
+            yield send("error", {"message": "Please enter a topic to compare."})
+            return
+
+        yield send("progress", {"pct": 10, "step": "Retrieving content from documents..."})
+
+        try:
+            yield send("progress", {"pct": 30, "step": "Analyzing with Claude AI..."})
+            ai_result = ai_compare_documents(doc_ids, topic.strip())
+        except Exception as e:
+            yield send("error", {"message": f"Comparison failed: {str(e)}"})
+            return
+
+        if ai_result.get("error"):
+            yield send("error", {"message": ai_result["error"]})
+            return
+
+        yield send("progress", {"pct": 90, "step": "Rendering comparison..."})
+
+        html_content = templates.get_template("components/compare_ai_results.html").render(
+            ai_result=ai_result,
+            topic=topic,
+        )
+
+        yield send("complete", {"html": html_content})
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
 

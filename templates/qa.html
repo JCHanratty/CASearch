@@ -93,4 +93,32 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.querySelector('form[hx-post="/qa/ask"]');
+    if (form && typeof ProgressModal !== 'undefined') {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            // Cancel any HTMX processing
+            if (window.htmx) htmx.off(form, 'htmx:beforeRequest');
+
+            var formData = new FormData(form);
+            var resultTarget = document.getElementById('qa-response');
+
+            ProgressModal.start('/qa/ask-stream', {
+                method: 'POST',
+                body: formData,
+                title: 'Analyzing Your Question',
+                onComplete: function(data) {
+                    if (data.html && resultTarget) {
+                        resultTarget.innerHTML = data.html;
+                        if (window.lucide) lucide.createIcons();
+                    }
+                }
+            });
+        }, true); // Use capture phase to beat HTMX
+    }
+});
+</script>
 {% endblock %}

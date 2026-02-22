@@ -11,7 +11,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from fastapi import APIRouter, Request as FastAPIRequest, UploadFile, File, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse
 
 from app.db import get_db
 from app.services.auth import (
@@ -218,6 +218,53 @@ async def scan_and_index(request: FastAPIRequest):
             "indexed_count": indexed,
             "error_count": errors,
         },
+    )
+
+
+@router.post("/scan-and-index-stream")
+async def scan_and_index_stream(request: FastAPIRequest):
+    """SSE streaming version of scan-and-index with progress updates."""
+    if not verify_session(request):
+        return JSONResponse({"error": "Admin login required"}, status_code=403)
+
+    async def event_stream():
+        import json as _json
+
+        def send(event_type, data):
+            return f"event: {event_type}\ndata: {_json.dumps(data)}\n\n"
+
+        yield send("progress", {"pct": 5, "step": "Scanning for new files..."})
+
+        scan_results = scan_agreements()
+        documents = get_all_files()
+        pending = [doc for doc in documents if doc.status == "pending"]
+        total = len(pending)
+
+        if total == 0:
+            yield send("progress", {"pct": 100, "step": "No new files to index."})
+            yield send("complete", {"indexed": 0, "errors": 0})
+            return
+
+        indexed = 0
+        errors = 0
+        for i, doc in enumerate(pending):
+            pct = int(10 + (i / total) * 85)
+            yield send("progress", {"pct": pct, "step": f"Indexing {doc.filename} ({i+1}/{total})..."})
+
+            try:
+                index_file(doc.id, build_embeddings=True)
+                indexed += 1
+            except Exception as e:
+                logger.warning("Failed to index %s: %s", doc.filename, e)
+                errors += 1
+
+        yield send("progress", {"pct": 98, "step": "Finalizing..."})
+        yield send("complete", {"indexed": indexed, "errors": errors})
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
 

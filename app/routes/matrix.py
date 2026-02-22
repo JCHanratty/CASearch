@@ -5,8 +5,10 @@ import html
 import re
 from io import BytesIO, StringIO
 
+import json
+
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response, StreamingResponse
 
 from app.services.compare_matrix import compare_matrix
 from app.services.file_scanner import get_all_files
@@ -68,6 +70,56 @@ async def matrix_compare(
             "file_ids": file_ids,
             "error": error,
         },
+    )
+
+
+@router.post("/compare-stream")
+async def matrix_compare_stream(
+    request: Request,
+    topic: str = Form(""),
+    file_ids: list[int] = Form([]),
+):
+    """SSE streaming matrix comparison with progress."""
+    async def event_stream():
+        def send(event_type, data):
+            return f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
+
+        if not topic.strip():
+            yield send("error", {"message": "Please enter a topic to compare."})
+            return
+
+        if len(file_ids) < 2:
+            yield send("error", {"message": "Please select at least 2 documents."})
+            return
+
+        yield send("progress", {"pct": 10, "step": "Retrieving content from documents..."})
+
+        try:
+            yield send("progress", {"pct": 30, "step": "Analyzing with Claude AI..."})
+            matrix_result = compare_matrix(topic.strip(), file_ids)
+        except Exception as e:
+            yield send("error", {"message": f"Matrix comparison failed: {str(e)}"})
+            return
+
+        if matrix_result.get("error"):
+            yield send("error", {"message": matrix_result["error"]})
+            return
+
+        yield send("progress", {"pct": 90, "step": "Building comparison table..."})
+
+        html_content = templates.get_template("components/matrix_results.html").render(
+            matrix=matrix_result,
+            topic=topic.strip(),
+            file_ids=file_ids,
+            error=None,
+        )
+
+        yield send("complete", {"html": html_content})
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
 
